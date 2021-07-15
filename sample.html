@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+
+	<h1>Sample</h1>
+
+<div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script	src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="jsQR.js"></script>
+
+<script src="symbol-sdk-pack-1.0.1.js"></script>
+<script src="xembook_config.js"></script>
+<script>
+//var nodelist = NODES;
+//var explorer = EXPLORER;
+const nodelist = TEST_NODES;
+const explorer = TEST_EXPLORER;
+</script>
+<script src="xembook-core.js"></script>
+<script>
+
+startApp(
+	async function(){
+		//初期設定完了後
+		chainInfo = await chainRepo.getChainInfo().toPromise()
+		console.log(chainInfo);
+	},
+
+	function(){
+		//リスナー再起動後
+	},
+
+	function(){
+		//リスナー受信後
+	},
+
+	function(data){
+		//スキャン完了後
+	}
+);
+
+</script>
+</body>
+</html>
