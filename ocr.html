@@ -124,6 +124,9 @@
 					</label>
 				</div>
 				<canvas id="canvas"  width="100%" hidden></canvas>
+				<button type="button" id="button_snap" class="btn btn-primary">
+					スナップ
+				</button>
 				<div id="scan_data" class="text-break"></div>
 			</div>
 			<div class="modal-footer">
@@ -682,6 +685,33 @@ $("#button_save").click(function(){
 	}
 });
 
+$("#button_snap").click(function(){
+
+	recognizing = true;
+	const worker = Tesseract.createWorker();
+	const rectangle = {
+		left: 0 ,
+		top: canvasElement.height *3/ 7,
+		width: canvasElement.width ,
+		height: canvasElement.height  / 7
+	};
+
+	(async () => {
+	  await worker.load();
+	  await worker.loadLanguage('eng');
+	  await worker.initialize('eng');
+	  await worker.setParameters({
+		tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-',
+	  });
+	  const { data: { text } } = await worker.recognize(canvasElement,{ rectangle });
+	  alert(text);
+	  setSignTargetData(text)
+	  await worker.terminate();
+	  recognizing = false;
+
+	})();
+
+});
 //パスフレーズ変更
 $("#button_change_pass").click(function(){
 

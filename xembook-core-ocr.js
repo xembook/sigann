@@ -233,30 +233,6 @@ function getCodeInfo(src){
 	if(recognizing == false){
 
 
-		recognizing = true;
-		const worker = Tesseract.createWorker();
-		const rectangle = {
-			left: 0 ,
-			top: canvasElement.height *3/ 7,
-			width: canvasElement.width ,
-			height: canvasElement.height  / 7
-		};
-
-		(async () => {
-		  await worker.load();
-		  await worker.loadLanguage('eng');
-		  await worker.initialize('eng');
-		  await worker.setParameters({
-		    tessedit_char_whitelist: '234567ABCDEFGHIJKLMNOPQRSTUVWXYZ-',
-			tessedit_pageseg_mode: Tesseract.PSM.PSM_SINGLE_WORD,
-		  });
-		  const { data: { text } } = await worker.recognize(canvasElement,{ rectangle });
-		  alert(text);
-		  setSignTargetData(text)
-		  await worker.terminate();
-		  recognizing = false;
-
-		})();
 /*
 		Tesseract.recognize(canvasElement, { lang: 'eng', tessedit_pageseg_mode: "RAW_LINE" })
 
