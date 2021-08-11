@@ -283,8 +283,11 @@ function scanFileImage(tag){
 				const img = new Image();
 				img.src = e.target.result;
 				img.onload = function() {
-					canvasElement.height = img.width;
-					canvasElement.width	= img.height;
+					canvasElement.width  = $('.modal-content').width() * 0.9;
+					canvasElement.height = $('.modal-content').height() * 0.9 * img.height / img.width;
+
+//					canvasElement.height = img.width;
+//					canvasElement.width	= img.height;
 					getCodeInfo(img);
 				};
 			};
@@ -365,7 +368,7 @@ function exeCosignature(signer,hash){
 				ignored:txRepo.announceAggregateBondedCosignature(_),
 				hash:_.parentHash
 			});
-		}),	
+		}),
 	)
 	.subscribe(aggTx=> {
 		showConfirmedTx(assetPublicAccount.address,aggTx.hash)
@@ -401,8 +404,8 @@ function exeTransfer(signer,exeTx){
 
 		console.log(nodeRepo.url + "/transactionStatus/" + signedTx.hash);
 		console.log(nodeRepo.url + "/transactions/confirmed/" + signedTx.hash);
-	
-	
+
+
 	}else{
 
 
@@ -603,9 +606,9 @@ async function getMosaicAsset(itemId){
 	var mosaicId;
 	if(itemId.constructor.name === "NamespaceId"){
 		mosaicId = await nsRepo.getLinkedMosaicId(itemId).toPromise();
-	
+
 	}else{
-	
+
 		mosaicId = itemId;
 	}
 
@@ -628,6 +631,3 @@ async function getMosaicAsset(itemId){
 	var mosaic = {info:mosaicInfo[0],label:mosaicLabel};
 	return mosaic;
 }
-
-
-
