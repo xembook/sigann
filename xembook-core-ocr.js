@@ -251,7 +251,7 @@ function getCodeInfo(src){
 			tessedit_pageseg_mode: Tesseract.PSM.PSM_SINGLE_COLUMN,
 		  });
 		  const { data: { text } } = await worker.recognize(canvasElement,{ rectangle });
-		  console.log(text);
+		  alert(text);
 		  setSignTargetData(text)
 		  await worker.terminate();
 		  recognizing = false;
