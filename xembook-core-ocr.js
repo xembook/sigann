@@ -252,6 +252,7 @@ function getCodeInfo(src){
 		  });
 		  const { data: { text } } = await worker.recognize(canvasElement,{ rectangle });
 		  console.log(text);
+		  setSignTargetData(text)
 		  await worker.terminate();
 		  recognizing = false;
 
