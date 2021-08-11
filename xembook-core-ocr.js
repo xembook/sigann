@@ -237,7 +237,7 @@ function getCodeInfo(src){
 		const worker = Tesseract.createWorker();
 		const rectangle = {
 			left: 0 ,
-			top: 0 + canvasElement.height *3/ 7,
+			top: canvasElement.height *3/ 7,
 			width: canvasElement.width ,
 			height: canvasElement.height  / 7
 		};
@@ -248,7 +248,7 @@ function getCodeInfo(src){
 		  await worker.initialize('eng');
 		  await worker.setParameters({
 		    tessedit_char_whitelist: '234567ABCDEFGHIJKLMNOPQRSTUVWXYZ-',
-			tessedit_pageseg_mode: Tesseract.PSM.PSM_SINGLE_COLUMN,
+			tessedit_pageseg_mode: Tesseract.PSM.PSM_SINGLE_WORD,
 		  });
 		  const { data: { text } } = await worker.recognize(canvasElement,{ rectangle });
 		  alert(text);
