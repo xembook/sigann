@@ -201,10 +201,10 @@ function tick() {
 
 		getCodeInfo(video);
 	}
-	drawLine({x:canvasElement.width  / 5,y:canvasElement.height*2/5}, {x:canvasElement.width * 4/ 5,y:canvasElement.height*2/5},"#FF3B58");
-	drawLine({x:canvasElement.width * 4 / 5,y:canvasElement.height*2/5}, {x:canvasElement.width * 4/ 5,y:canvasElement.height*3/5},"#FF3B58");
-	drawLine({x:canvasElement.width *4 / 5,y:canvasElement.height*3/5}, {x:canvasElement.width / 5,y:canvasElement.height*3/5},"#FF3B58");
-	drawLine({x:canvasElement.width / 5,y:canvasElement.height*3/5}, {x:canvasElement.width / 5,y:canvasElement.height*2/5},"#FF3B58");
+	drawLine({x:0,y:canvasElement.height*3/7}, {x:canvasElement.width,y:canvasElement.height*3/7},"#FF3B58");
+	drawLine({x:canvasElement.width,y:canvasElement.height*3/7}, {x:canvasElement.width,y:canvasElement.height*4/7},"#FF3B58");
+	drawLine({x:canvasElement.width,y:canvasElement.height*4/7}, {x:0,y:canvasElement.height*4/7},"#FF3B58");
+	drawLine({x:0,y:canvasElement.height*4/7}, {x:0,y:canvasElement.height*3/7},"#FF3B58");
 //		drawLine(code.location.topRightCorner		, code.location.bottomRightCorner	,"#FF3B58");
 //		drawLine(code.location.bottomRightCorner	, code.location.bottomLeftCorner	,"#FF3B58");
 //		drawLine(code.location.bottomLeftCorner		, code.location.topLeftCorner		,"#FF3B58");
@@ -236,10 +236,10 @@ function getCodeInfo(src){
 		recognizing = true;
 		const worker = Tesseract.createWorker();
 		const rectangle = {
-			left: 0 + canvasElement.width  / 5,
-			top: 0 + canvasElement.height *2/ 5,
-			width: canvasElement.width * 3 / 5,
-			height: canvasElement.height  / 5
+			left: 0 ,
+			top: 0 + canvasElement.height *3/ 7,
+			width: canvasElement.width ,
+			height: canvasElement.height  / 7
 		};
 
 		(async () => {
