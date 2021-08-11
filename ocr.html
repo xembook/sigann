@@ -124,6 +124,7 @@
 					</label>
 				</div>
 				<canvas id="canvas"  width="100%" hidden></canvas>
+				<canvas id="canvas2"  width="100%"></canvas>
 				<button type="button" id="button_snap" class="btn btn-primary">
 					スナップ
 				</button>
@@ -686,24 +687,44 @@ $("#button_save").click(function(){
 });
 
 $("#button_snap").click(function(){
-
+	isMovieScanning = false;
 	recognizing = true;
+
+	canvas2 = document.getElementById("canvas2");
+	canvas2.width=canvasElement.width * 2;
+    canvas2.height=canvasElement.height / 7 * 2;
+
+
+	ctx2 = canvas2.getContext('2d');
+//	ctx2.scale(2, 2);
+	ctx2.drawImage( canvasElement,
+		0,canvasElement.height * 3 / 7 ,
+		canvasElement.width,canvasElement.height/ 7 ,
+		0,0,
+		canvasElement.width * 2,canvasElement.height/7 * 2
+
+	);
+
+
+
+
 	const worker = Tesseract.createWorker();
-	const rectangle = {
-		left: 0 ,
-		top: canvasElement.height *3/ 7,
-		width: canvasElement.width ,
-		height: canvasElement.height  / 7
-	};
+	// const rectangle = {
+	// 	left: 0 ,
+	// 	top: canvasElement.height *3/ 7,
+	// 	width: canvasElement.width ,
+	// 	height: canvasElement.height  / 7
+	// };
+
 
 	(async () => {
 	  await worker.load();
 	  await worker.loadLanguage('eng');
 	  await worker.initialize('eng');
-	  await worker.setParameters({
-		tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-',
-	  });
-	  const { data: { text } } = await worker.recognize(canvasElement,{ rectangle });
+	//   await worker.setParameters({
+	// 	tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-',
+	//   });
+	  const { data: { text } } = await worker.recognize(canvas2);
 	  alert(text);
 	  setSignTargetData(text)
 	  await worker.terminate();
