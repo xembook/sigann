@@ -14,10 +14,15 @@
 	<h1>OCR</h1>
 
 	<div id="div1">
-		<button type="button" id="restore" class="btn btn-primary">起動</button>
+		<button type="button" id="restore" class="btn btn-primary">カメラ起動</button>
 	</div><!-- div1 -->
 
 	<div class="collapse" id="div3">
+		<div id="address"></div>
+		<button type="button" id="send_tomato" class="btn btn-primary">送信</button>
+		<div id="result">
+			<ul></ul>
+		</div>
 	</div><!-- div3 -->
 </div>
 
@@ -42,7 +47,7 @@
 					</label>
 				</div>
 				<canvas id="canvas"  width="100%" hidden></canvas>
-				<!-- <canvas id="canvas2"  width="100%"></canvas>-->
+				<!-- canvas id="canvas2"  width="100%"></canvas -->
 				<button type="button" id="button_snap" class="btn btn-primary">
 					スナップ
 				</button>
@@ -68,15 +73,15 @@
 	integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
 	crossorigin="anonymous">
 </script>
+<script src="symbol-sdk-pack-1.0.1.js"></script>
+<script src="https://xembook.github.io/xembook/xembook_config.js"></script>
+
 <script>
 
 var currentTab;			//カメラ操作している場合の現在選択中のタブ
 var scanData = document.getElementById("scan_data");
 
 ocrFrameDiv = 7;
-//ocrFrameDivTop = 3 / 7;
-//ocrFrameDivBottom = 4 / 7;
-
 ocrFrameDivTop = (Math.floor(ocrFrameDiv / 2)  )/ ocrFrameDiv;
 ocrFrameDivBottom = (Math.floor(ocrFrameDiv / 2)+1) / ocrFrameDiv;
 
@@ -108,12 +113,16 @@ $("#modal_ok").click(async function(){
 	if(currentTab == "tab_transfer"){	//送信
 	}else if(currentTab == "tab_"){	//復元
 
+		$("#address").text(scanData.innerText);
+		$("#div3").show();
 		scanData.innerText = "";
+
 	}
 });
 
 
 $('#file_image').change(function(e){scanFileImage("file_image");});
+
 
 $("#button_snap").click(function(){
 	isMovieScanning = false;
@@ -142,7 +151,6 @@ $("#button_snap").click(function(){
 		// 	tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-',
 		//   });
 		const { data: { text } } = await worker.recognize(canvas2);
-		alert(text);
 		scanData.innerText = text;
 		$('#button_reset').prop('disabled', false);
 		$('#button_snap').prop('disabled', true);
@@ -150,6 +158,7 @@ $("#button_snap").click(function(){
 		await worker.terminate();
 	})();
 });
+
 
 $("#button_reset").click(function(){
 	isMovieScanning = true;
@@ -176,9 +185,6 @@ function drawLine(begin, end, color) {
 	canvas.strokeStyle = color;
 	canvas.stroke();
 }
-
-
-
 
 function drawFrame(){
 	drawLine({x:0,y:canvasElement.height*ocrFrameDivTop}, {x:canvasElement.width,y:canvasElement.height*ocrFrameDivTop},"#FF3B58");
@@ -272,6 +278,66 @@ function scanFileImage(tag){
 	}
 }
 ////////////////////////////////////////////////////////
+
+const nem = require("/node_modules/symbol-sdk");
+const op = require("/node_modules/rxjs/operators");
+const rxjs = require("/node_modules/rxjs");
+
+const node = "https://node.xembook.net";
+const repo = new nem.RepositoryFactoryHttp(node);
+const txRepo = repo.createTransactionRepository();
+const nsRepo = repo.createNamespaceRepository();
+
+var listener;
+
+
+(async() =>{
+
+
+	if(listener === undefined){
+		const wsEndpoint = node.replace('http', 'ws') + "/ws";
+		await listenerKeepOpening(wsEndpoint,repo.createNamespaceRepository());
+	}
+
+	async function listenerKeepOpening(wsEndpoint,nsRepo){
+
+		listener = new nem.Listener(wsEndpoint,nsRepo,WebSocket);
+		await listener.open();
+		console.log("listener open");
+		listener.webSocket.onclose = async function(){
+			console.log("listener onclose");
+			await listenerKeepOpening(wsEndpoint,nsRepo);
+		}
+	}
+})();
+
+$("#send_tomato").click(function(){
+	privateKey = "";
+	alice = nem.Account.createFromPrivateKey(privateKey, nem.NetworkType.MAIN_NET);
+	
+//	address = $("#address").text();
+	address = nem.Address.createFromRawAddress("ND7MNBG4RYJX5BBHQ2AB5ZVQSWDHKUOUJQB7WVI");
+
+	tx = nem.TransferTransaction.create(
+		nem.Deadline.create(1615853185),
+		address, 
+		[new nem.Mosaic(new nem.MosaicId('310378C18A140D1B'), nem.UInt64.fromUint(1))],
+		nem.PlainMessage.create('Happy NEM Tomatina!'),
+		nem.NetworkType.MAIN_NET
+	).setMaxFee(100);
+	
+	signedTx = alice.sign(tx,"57F7DA205008026C776CB6AED843393F04CD458E0AA2D9F1D5F31A402072B2D6");
+	console.log(signedTx.hash);
+	txRepo.announce(signedTx).subscribe(x=>{
+
+		$('#result ul')
+		.append('<li><a target="_blank" href="http://explorer.symbolblockchain.io/transactions/' + signedTx.hash + '">エクスプローラーで確認</a></li>');
+
+		console.log(x)
+	});
+
+
+});
 
 
 </script>
