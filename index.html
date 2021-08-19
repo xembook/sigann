@@ -210,6 +210,7 @@ startApp(
 	},
 	//リスナー再起動後
 	function(){
+		listener.newBlock();
 		if(assetPublicAccount !== undefined){
 			showAccountQR();
 		}
@@ -292,7 +293,7 @@ async function appendTxInfo(tx,senderAddress){
 async function showPayload(){
 
 	if(payload !== ""){
-	
+
 		var aggTx = nem.TransactionMapping.createFromPayload(payload);
 		qrcode = qr.QRCodeGenerator.createTransactionRequest(aggTx,networkType,generationHash);
 		scanData.innerText = qrcode.toJSON();
@@ -321,7 +322,7 @@ async function showTxInfo(aggTx){
 		for(i = 0 ; i < aggTx.innerTransactions.length; i++){
 
 			if(aggTx.innerTransactions[i].signer.address.plain() === "TAXQUTQQNS6JEJG7PLC6FRVJ2USS44GLMVULPGQ"){
-			
+
 				aggTx.innerTransactions[i].signer = assetPublicAccount;
 			}
 		}
@@ -350,7 +351,7 @@ async function showTxInfo(aggTx){
 
 		//送信者undefinedの場合は
 		if(aggTx.signer === undefined){
-		
+
 			aggTx.signer = assetPublicAccount;
 		}
 
@@ -409,8 +410,8 @@ function showAccountQR(){
 
 		$('#div3').collapse('show');
 	});
-	
-	
+
+
 }
 
 function showConfirmedTx(address,hash){
@@ -429,7 +430,7 @@ function showConfirmedTx(address,hash){
 //■■■CONTROLLER■■■
 
 //ログイン
-$("#restore").click(function(){ 
+$("#restore").click(function(){
 
 	if($("#use_saved_qr:checked").val()){
 
@@ -479,7 +480,7 @@ $("#modal_ok").click(async function(){
 //		payloadType = nem.TransactionType[aggTx.type];
 
 		await showTxInfo(aggTx);
-		
+
 
 	}else if(currentTab == "tab_"){	//復元
 
@@ -589,7 +590,7 @@ $("#create").click(async function(){
 
 	var msg = "作成したアカウント情報を保存しますか？";
 	if(localStorage.getItem('signerJSON') !== null){
-		msg += "\n以前に保存していた情報は上書き削除されます。";
+		msg += "\n以前に保存していた情報は上書き削除されます。「キャンセル」で今回作成したアカウントを一時的に使用します。";
 	}
 
 	if(window.confirm(msg)){
@@ -632,7 +633,7 @@ $("#button_transfer").click(
 				exeCosignature(signer,scanData.innerText);
 
 			}else{
-				
+
 				//payloadデータと判断
 				const tx = nem.TransactionMapping.createFromPayload(scanData.innerText);
 
@@ -643,7 +644,7 @@ $("#button_transfer").click(
 				}
 			}
 		}
-		
+
 		delete signer;
 
 		//スキャンモーダル無効の終了

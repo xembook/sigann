@@ -284,7 +284,7 @@ function scanFileImage(tag){
 				img.src = e.target.result;
 				img.onload = function() {
 					canvasElement.width  = $('.modal-content').width() * 0.9;
-					canvasElement.height = $('.modal-content').height() * 0.9 * img.height / img.width;
+					canvasElement.height = canvasElement.width * img.height / img.width;
 
 //					canvasElement.height = img.width;
 //					canvasElement.width	= img.height;

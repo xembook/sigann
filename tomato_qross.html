@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+	crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+
+	<h1>QRoss🍅🍌</h1>
+	<div class="mb-3">
+		<label for="exampleFormControlTextarea1" class="form-label">QR</label>
+		<div id="qr"></div>
+	</div>
+
+	<div class="mb-3">
+	  <label for="exampleFormControlTextarea1" class="form-label">URL</label>
+	  <textarea class="form-control" id="qrtext" rows="10"></textarea>
+	</div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script src="symbol-sdk-pack-1.0.1.min.js"></script>
+<script src="xembook_config.js"></script>
+<script>
+var nodelist = NODES;
+var explorer = EXPLORER;
+//var nodelist = TEST_NODES;
+//var explorer = TEST_EXPLORER;
+</script>
+<script src="xembook-core.js"></script>
+<script>
+//uri = require("/node_modules/symbol-uri-scheme");
+qr = require("/node_modules/symbol-qr-library");
+
+
+startApp(
+	//初期設定完了後
+	async function(){
+		await ready();
+	},
+	//リスナー再起動後
+	function(){},
+	//リスナー受信後
+	function(){},
+	//スキャン完了後
+	function(data){}
+);
+
+
+async function ready(){
+
+	var mad = "NCZSLIZKI5MTVGEVDLI6D4NJNJMZNN62VFX432A";
+	var mam = "1";
+	var mmo = "310378C18A140D1B"; //tomato
+	var yad = "NCZSLIZKI5MTVGEVDLI6D4NJNJMZNN62VFX432A";
+	var yam = "1";
+	var ymo = "0DE3E0A8877533CD"; //banana
+
+	if (1 < document.location.search.length) {
+
+		const query = document.location.search.substring(1);
+		const prms = query.split('&');
+		const item = new Object();
+		for (var i = 0; i < prms.length; i++) {
+			const elm   = prms[i].split('=');
+			const idx   = decodeURIComponent(elm[0]);
+			const val   = decodeURIComponent(elm[1]);
+			item[idx] = decodeURIComponent(val);
+		}
+		if("mad" in item){ mad = item["mad"];}
+		if("mam" in item){ mam = item["mam"];}
+		if("mmo" in item){ mmo = item["mmo"];}
+		if("yad" in item){ yad = item["yad"];}
+		if("yam" in item){ yam = item["yam"];}
+		if("ymo" in item){ ymo = item["ymo"];}
+	}
+
+	myAddress = nem.Address.createFromRawAddress(mad);
+	yourAddress = nem.Address.createFromRawAddress(yad);
+
+	myMosaic = new nem.Mosaic(new nem.MosaicId(mmo), nem.UInt64.fromUint(Number(mam)));
+	yourMosaic = new nem.Mosaic(new nem.MosaicId(ymo), nem.UInt64.fromUint(Number(yam)));
+
+
+	myAccountInfo = await accountRepo.getAccountInfo(myAddress).toPromise();
+	myPublicKey = myAccountInfo.publicKey;
+	myPublicAccount = nem.PublicAccount.createFromPublicKey(myPublicKey ,networkType);
+
+	yourAccountInfo = await accountRepo.getAccountInfo(yourAddress).toPromise();
+	yourPublicKey = yourAccountInfo.publicKey;
+	yourPublicAccount = nem.PublicAccount.createFromPublicKey(yourPublicKey ,networkType);
+
+	if(myPublicKey == "0000000000000000000000000000000000000000000000000000000000000000" ||
+		yourPublicKey == "0000000000000000000000000000000000000000000000000000000000000000"){
+		alert("未知のアドレスからトランザクションを作成しようとしています。トランザクションを作成するためには最低1回は送金を実施しておく必要があります。")
+		return;
+	}
+
+	myTx = nem.TransferTransaction.create(
+	    undefined,
+	    yourAddress,
+	    [myMosaic],
+	    nem.EmptyMessage,
+	    networkType
+	);
+
+	yourTx = nem.TransferTransaction.create(
+	    undefined,
+	    myAddress,
+	    [yourMosaic],
+	    nem.EmptyMessage,
+	    networkType
+	);
+
+	aggregateArray = [
+	    myTx.toAggregate(myPublicAccount),
+	    yourTx.toAggregate(yourPublicAccount),
+	]
+
+	aggregateTx = nem.AggregateTransaction.createBonded(
+	    nem.Deadline.create(epochAdjustment),
+	    aggregateArray,
+	    networkType,
+	    [],
+	);
+	console.log(aggregateTx);
+	qrcode = qr.QRCodeGenerator.createTransactionRequest(aggregateTx,networkType,generationHash);
+	qrcode.toBase64().subscribe(x =>{
+		$('#qr').append('<div><img src=' + x + '></div>');
+	});
+
+	serialized = aggregateTx.serialize();
+/*
+	transactionURI = new uri.TransactionURI(serialized, nem.TransactionMapping.createFromPayload);
+	txUri = transactionURI.build();
+*/
+	console.log(txUri);
+
+	txUri = "https://xembook.github.io/sigann/tomato.html?payload=" + serialized;
+	$('#qrtext').val(txUri);
+
+}
+
+</script>
+</body>
+</html>
