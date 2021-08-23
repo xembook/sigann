@@ -141,9 +141,9 @@ async function ready(){
 	transactionURI = new uri.TransactionURI(serialized, nem.TransactionMapping.createFromPayload);
 	txUri = transactionURI.build();
 */
-	console.log(txUri);
 
 	txUri = "https://xembook.github.io/sigann/tomato.html?payload=" + serialized;
+	console.log(txUri);
 	$('#qrtext').val(txUri);
 
 }
