@@ -159,7 +159,6 @@ $("#button_snap").click(function(){
 		$('#spinner_snap').collapse('hide');
 		line = text.replace(/\r?\n/g,"");
 		var scanedAddress = line.match(/N[0-Z]{5}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{2}[AIQY]/);
-		alert(scanedAddress);
 		validAddress = "";
 		if(scanedAddress){
 			
@@ -187,7 +186,6 @@ $("#button_snap").click(function(){
 				$('#button_reset').prop('disabled', true);
 
 			}
-			alert(validAddress);
 			console.log(line);
 			console.log(scanedAddress);
 
