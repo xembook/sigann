@@ -129,8 +129,7 @@ $("#button_snap").click(function(){
 
 	isMovieScanning = false;
 
-//	scale = 2;
-	scale = 1.8;
+	scale = 2;
 	
 	canvas2 = document.createElement("canvas");
 //	canvas2 = document.getElementById("canvas2");
@@ -167,7 +166,10 @@ $("#button_snap").click(function(){
 			if(validAddress ==="" ){validAddress = replaceWord( scanedAddress[0].split(/[E6]/) ,"E","6");}
 			if(validAddress ==="" ){validAddress = replaceWord( scanedAddress[0].split(/[OD]/) ,"O","D");}
 			if(validAddress ==="" ){validAddress = replaceWord( scanedAddress[0].split(/[IJ]/) ,"I","J");}
-			
+			if(validAddress ==="" ){validAddress = replaceWord2(scanedAddress[0].split(/[IJ]/) ,"A","4",/[S5]/,"S","5");}
+			if(validAddress ==="" ){validAddress = replaceWord2(scanedAddress[0].split(/[IJ]/) ,"I","J",/[S5]/,"S","5");}
+
+
 
 			if(validAddress === ""){
 
@@ -225,6 +227,36 @@ function replaceWord(splitedAddress ,a,b){
 				validAddress = builder;
 				scanData.innerText = validAddress;
 			}
+		}
+	}
+	console.log(validAddress);
+	return validAddress;
+
+}
+
+function replaceWord2(splitedAddress ,a,b,reg,c,d){
+
+	validAddress = "";
+	balls = [...Array(splitedAddress.length ).keys()] ;
+
+	for(ii=1;ii<balls.length;ii++){
+		combi = kumiawase(balls,ii);
+		for(i=0;i<combi.length;i++){
+
+			builder = "";
+			for(j=0;j<splitedAddress.length;j++){
+				builder = builder + splitedAddress[j];
+				
+				if(j !== splitedAddress.length - 1){
+					if(combi[i].includes(j)  ){
+						builder = builder + a;
+					}else{
+						builder = builder + b;
+					}
+				}
+			}
+			console.log(builder);
+			validAddress = replaceWord( builder.split(reg) ,c,d);
 		}
 	}
 	console.log(validAddress);
