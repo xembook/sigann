@@ -166,6 +166,7 @@ $("#button_snap").click(function(){
 			if(validAddress ==="" ){validAddress = replaceWord( scanedAddress[0].split(/[E6]/) ,"E","6");}
 			if(validAddress ==="" ){validAddress = replaceWord( scanedAddress[0].split(/[OD]/) ,"O","D");}
 			if(validAddress ==="" ){validAddress = replaceWord( scanedAddress[0].split(/[IJ]/) ,"I","J");}
+			if(validAddress ==="" ){validAddress = replaceWord( scanedAddress[0].split(/[Z2]/) ,"Z","7");}
 			if(validAddress ==="" ){validAddress = replaceWord2(scanedAddress[0].split(/[A4]/) ,"A","4",/[S5]/,"S","5");}
 			if(validAddress ==="" ){validAddress = replaceWord2(scanedAddress[0].split(/[IJ]/) ,"I","J",/[S5]/,"S","5");}
 
@@ -203,15 +204,15 @@ $("#button_snap").click(function(){
 
 function replaceWord(splitedAddress ,a,b){
 
-	validAddress = "";
-	balls = [...Array(splitedAddress.length ).keys()] ;
+	let validAddress = "";
+	let balls = [...Array(splitedAddress.length ).keys()] ;
 
-	for(ii=1;ii<balls.length;ii++){
+	for(let ii=1;ii<balls.length;ii++){
 		combi = kumiawase(balls,ii);
-		for(i=0;i<combi.length;i++){
+		for(let i=0;i<combi.length;i++){
 
 			builder = "";
-			for(j=0;j<splitedAddress.length;j++){
+			for(let j=0;j<splitedAddress.length;j++){
 				builder = builder + splitedAddress[j];
 				
 				if(j !== splitedAddress.length - 1){
@@ -236,15 +237,15 @@ function replaceWord(splitedAddress ,a,b){
 
 function replaceWord2(splitedAddress ,a,b,reg,c,d){
 
-	validAddress = "";
-	balls = [...Array(splitedAddress.length ).keys()] ;
+	let validAddress = "";
+	let balls = [...Array(splitedAddress.length ).keys()] ;
 
-	for(ii=1;ii<balls.length;ii++){
-		combi = kumiawase(balls,ii);
-		for(i=0;i<combi.length;i++){
+	for(let ii=1;ii<balls.length;ii++){
+		let combi = kumiawase(balls,ii);
+		for(let i=0;i<combi.length;i++){
 
-			builder = "";
-			for(j=0;j<splitedAddress.length;j++){
+			let builder = "";
+			for(let j=0;j<splitedAddress.length;j++){
 				builder = builder + splitedAddress[j];
 				
 				if(j !== splitedAddress.length - 1){
