@@ -152,10 +152,44 @@ $("#button_snap").click(function(){
 	   });
 		const { data: { text } } = await worker.recognize(canvas2);
 		var scanedAddress = text.match(/N[0-Z]{5}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{2}[AIQY]/);
-		if(scanedAddress && nem.Address.isValidRawAddress(scanedAddress[0])){
+		
+		validAddress = "";
+		if(scanedAddress){
+			
+			splitedAddress = scanedAddress[0].split(/[S5]/);
+			balls = [...Array(splitedAddress.length - 1).keys()] ;
+			nukitorisu = balls.length - 1;
+
+			for(ii=1;ii<balls.length;ii++){
+				combi = kumiawase(balls,ii);
+				for(i=0;i<combi.length;i++){
+
+					builder = "";
+					for(j=0;j<splitedAddress.length;j++){
+						builder = builder + splitedAddress[j];
+						
+						if(j !== splitedAddress.length - 1){
+							if(combi[i].includes(j)  ){
+								builder = builder + "S";
+							}else{
+								builder = builder + "5";
+							}
+						}
+					}
+					console.log(builder);
+					console.log(nem.Address.isValidRawAddress(builder.replace(/-/g, '')));
+					if(nem.Address.isValidRawAddress(builder.replace(/-/g, ''))){
+						validAddress = builder;
+						scanData.innerText = scanedAddress;
+					}
+				}
+			}
+			if(validAddress === ""){
+
+				alert("アドレスのスキャンに失敗しました。")
+			}
 			console.log(text);
 			console.log(scanedAddress);
-			scanData.innerText = scanedAddress;
 
 		}else{
 			alert("アドレスのスキャンに失敗しました。")
@@ -169,6 +203,27 @@ $("#button_snap").click(function(){
 	})();
 });
 
+
+function kumiawase(balls, nukitorisu){
+  var arrs, i, j, zensu, kumis;
+  arrs = [];
+  zensu = balls.length;
+  if(zensu < nukitorisu){
+    return;
+  }else if(nukitorisu == 1){
+    for(i = 0; i < zensu; i++){
+      arrs[i] = [balls[i]];
+    }
+  }else{
+    for(i = 0; i < zensu - nukitorisu + 1; i ++){
+      kumis = kumiawase(balls.slice(i + 1), nukitorisu - 1);
+      for(j = 0; j < kumis.length; j ++){
+        arrs.push([balls[i]].concat(kumis[j]));
+      }
+    }
+  }
+  return arrs;
+}
 
 $("#button_reset").click(function(){
 	isMovieScanning = true;
