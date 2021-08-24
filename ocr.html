@@ -151,7 +151,17 @@ $("#button_snap").click(function(){
 	 	tessedit_char_whitelist: '234567ABCDEFGHIJKLMNOPQRSTUVWXYZ-',
 	   });
 		const { data: { text } } = await worker.recognize(canvas2);
-		scanData.innerText = text;
+		var scanedAddress = text.match(/N[0-Z]{5}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{2}[AIQY]/);
+		if(scanedAddress && nem.Address.isValidRawAddress(scanedAddress[0])){
+			console.log(text);
+			console.log(scanedAddress);
+			scanData.innerText = scanedAddress;
+
+		}else{
+			alert("アドレスのスキャンに失敗しました。")
+		}
+
+
 		$('#button_reset').prop('disabled', false);
 		$('#button_snap').prop('disabled', true);
 
@@ -267,7 +277,7 @@ function scanFileImage(tag){
 				img.src = e.target.result;
 				img.onload = function() {
 					canvasElement.width  = $('.modal-content').width() * 0.9;
-					canvasElement.height = $('.modal-content').height() * 0.9 * img.height / img.width;
+					canvasElement.height = $('.modal-content').width() * 0.9 * img.height / img.width;
 					getCodeInfo(img);
 					drawFrame();
 				};
