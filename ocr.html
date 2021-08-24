@@ -257,7 +257,8 @@ function replaceWord2(splitedAddress ,a,b,reg,c,d){
 				}
 			}
 			console.log(builder);
-			validAddress = replaceWord( builder.split(reg) ,c,d);
+			if(validAddress === ""){validAddress = replaceWord( builder.split(reg) ,c,d)}
+			console.log(validAddress);
 		}
 	}
 	console.log(validAddress);
