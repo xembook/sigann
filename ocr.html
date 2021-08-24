@@ -47,7 +47,7 @@
 					</label>
 				</div>
 				<canvas id="canvas"  width="100%" hidden></canvas>
-				<!-- canvas id="canvas2"  width="100%"></canvas -->
+				<canvas id="canvas2"  width="100%"></canvas>
 				<button type="button" id="button_snap" class="btn btn-primary">
 					スナップ
 				</button>
@@ -129,8 +129,8 @@ $("#button_snap").click(function(){
 
 	scale = 2;
 	
-	canvas2 = document.createElement("canvas");
-//	canvas2 = document.getElementById("canvas2");
+//	canvas2 = document.createElement("canvas");
+	canvas2 = document.getElementById("canvas2");
 	canvas2.width=canvasElement.width * scale;
 	canvas2.height=canvasElement.height / ocrFrameDiv * scale;
 
@@ -147,9 +147,9 @@ $("#button_snap").click(function(){
 		await worker.load();
 		await worker.loadLanguage('eng');
 		await worker.initialize('eng');
-		//   await worker.setParameters({
-		// 	tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-',
-		//   });
+		await worker.setParameters({
+			tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-',
+		});
 		const { data: { text } } = await worker.recognize(canvas2);
 		scanData.innerText = text;
 		$('#button_reset').prop('disabled', false);
@@ -267,7 +267,7 @@ function scanFileImage(tag){
 				img.src = e.target.result;
 				img.onload = function() {
 					canvasElement.width  = $('.modal-content').width() * 0.9;
-					canvasElement.height = $('.modal-content').height() * 0.9 * img.height / img.width;
+					canvasElement.height = $('.modal-content').width() * 0.9 * img.height / img.width;
 					getCodeInfo(img);
 					drawFrame();
 				};
