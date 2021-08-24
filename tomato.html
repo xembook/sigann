@@ -11,7 +11,7 @@
 <body>
 <div class="container">
 
-	<h1>SigAnn</h1>
+	<h1>SigAnn🍅</h1>
 
 	<div class="collapse" id="div1">
 		<label>パスフレーズ:</label>
@@ -651,7 +651,23 @@ $("#button_transfer").click(
 		disableScan = false;
 	}
 );
-$("#button_faucet").click(function(){window.open(FAUCET + "/?recipient=" + assetPublicAccount.address.plain() + "&amount=20","_blank")});
+$("#button_faucet").click(function(){
+
+		$('#button_faucet').prop('disabled', true);
+
+		$.ajax({
+			url: "https://ec2.xembook.net/tomato/" + assetPublicAccount.address.plain()  ,
+			type: 'GET',
+			error: function(XMLHttpRequest) {
+				console.log( XMLHttpRequest);
+				$('#button_faucet').prop('disabled', false);
+
+			}
+		}).done(function(res){
+			console.log(res);
+			$('#button_faucet').prop('disabled', false);
+		});
+});
 
 /** 設定タブ **/
 
