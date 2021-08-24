@@ -11,7 +11,7 @@
 <body>
 <div class="container">
 
-	<h1>OCR</h1>
+	<h1>OCR🍅</h1>
 
 	<div id="div1">
 		<button type="button" id="restore" class="btn btn-primary">カメラ起動</button>
@@ -49,6 +49,7 @@
 				<canvas id="canvas"  width="100%" hidden></canvas>
 				<!-- canvas id="canvas2"  width="100%"></canvas -->
 				<button type="button" id="button_snap" class="btn btn-primary">
+					<span id="spinner_snap" class="collapse spinner-border spinner-border-sm" role="status"></span>
 					スナップ
 				</button>
 				<button type="button" id="button_reset" class="btn btn-primary">
@@ -66,6 +67,7 @@
 </div><!-- /.modal -->
 
 <script type="text/javascript" src="https://unpkg.com/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
+<script type="text/javascript" src="https://unpkg.com/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script
@@ -77,6 +79,8 @@
 <script src="https://xembook.github.io/xembook/xembook_config.js"></script>
 
 <script>
+
+PSM  = Tesseract.PSM;
 
 var currentTab;			//カメラ操作している場合の現在選択中のタブ
 var scanData = document.getElementById("scan_data");
@@ -92,7 +96,7 @@ $('#button_reset').prop('disabled', true);
 $("#restore").click(function(){
 
 	currentTab = "tab_";
-	$('#modal-label').text("テキストを赤枠内に入れてスキャンしてください。")
+	$('#modal-label').text("アドレスを赤枠内に入れてスキャンしてください。")
 	$('#div-ns').collapse('hide');
 	$('#modal-qrscan').modal('show');
 	startVideo();
@@ -116,15 +120,15 @@ $("#modal_ok").click(async function(){
 		$("#address").text(scanData.innerText);
 		$("#div3").show();
 		scanData.innerText = "";
-
 	}
 });
 
 
 $('#file_image').change(function(e){scanFileImage("file_image");});
-
-
 $("#button_snap").click(function(){
+	$('#spinner_snap').collapse('show');
+	$('#button_snap').prop('disabled', true);
+
 	isMovieScanning = false;
 
 	scale = 2;
@@ -147,18 +151,145 @@ $("#button_snap").click(function(){
 		await worker.load();
 		await worker.loadLanguage('eng');
 		await worker.initialize('eng');
-		//   await worker.setParameters({
-		// 	tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-',
-		//   });
+		await worker.setParameters({
+			tessedit_char_whitelist: '234567ABCDEFGHIJKLMNOPQRSTUVWXYZ-',
+			tessedit_pageseg_mode: PSM.SINGLE_LINE
+		});
 		const { data: { text } } = await worker.recognize(canvas2);
-		scanData.innerText = text;
+
+		$('#spinner_snap').collapse('hide');
+		var scanedAddress = text.match(/N[0-Z]{5}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{2}[AIQY]/);
+		
+		validAddress = "";
+		if(scanedAddress){
+			
+			if(validAddress ==="" ){validAddress = replaceWord( scanedAddress[0].split(/[S5]/) ,"S","5");}
+			if(validAddress ==="" ){validAddress = replaceWord( scanedAddress[0].split(/[Z2]/) ,"Z","2");}
+			if(validAddress ==="" ){validAddress = replaceWord( scanedAddress[0].split(/[A4]/) ,"A","4");}
+			if(validAddress ==="" ){validAddress = replaceWord( scanedAddress[0].split(/[E6]/) ,"E","6");}
+			if(validAddress ==="" ){validAddress = replaceWord( scanedAddress[0].split(/[OD]/) ,"O","D");}
+			if(validAddress ==="" ){validAddress = replaceWord( scanedAddress[0].split(/[IJ]/) ,"I","J");}
+			if(validAddress ==="" ){validAddress = replaceWord( scanedAddress[0].split(/[Z2]/) ,"Z","7");}
+			if(validAddress ==="" ){validAddress = replaceWord( scanedAddress[0].split(/[S6]/) ,"S","6");}
+			if(validAddress ==="" ){validAddress = replaceWord2(scanedAddress[0].split(/[A4]/) ,"A","4",/[S5]/,"S","5");}
+			if(validAddress ==="" ){validAddress = replaceWord2(scanedAddress[0].split(/[IJ]/) ,"I","J",/[S5]/,"S","5");}
+
+
+
+			if(validAddress === ""){
+
+				alert("アドレスのスキャンに失敗しました。" + scanedAddress[0]);
+				isMovieScanning = true;
+				scanData.innerText = "";
+				requestAnimationFrame(tick);
+				$('#button_snap').prop('disabled', false);
+				$('#button_reset').prop('disabled', true);
+
+			}
+			console.log(text);
+			console.log(scanedAddress);
+
+		}else{
+			alert("アドレスのスキャンに失敗しました。");
+			isMovieScanning = true;
+			scanData.innerText = "";
+			requestAnimationFrame(tick);
+			$('#button_snap').prop('disabled', false);
+			$('#button_reset').prop('disabled', true);
+
+		}
+
+
 		$('#button_reset').prop('disabled', false);
-		$('#button_snap').prop('disabled', true);
 
 		await worker.terminate();
 	})();
 });
 
+function replaceWord(splitedAddress ,a,b){
+
+	let validAddress = "";
+	let balls = [...Array(splitedAddress.length ).keys()] ;
+
+	for(let ii=1;ii<balls.length;ii++){
+		combi = kumiawase(balls,ii);
+		for(let i=0;i<combi.length;i++){
+
+			builder = "";
+			for(let j=0;j<splitedAddress.length;j++){
+				builder = builder + splitedAddress[j];
+				
+				if(j !== splitedAddress.length - 1){
+					if(combi[i].includes(j)  ){
+						builder = builder + a;
+					}else{
+						builder = builder + b;
+					}
+				}
+			}
+			console.log(builder);
+			if(nem.Address.isValidRawAddress(builder.replace(/-/g, ''))){
+				validAddress = builder;
+				scanData.innerText = validAddress;
+			}
+		}
+	}
+	console.log(validAddress);
+	return validAddress;
+
+}
+
+function replaceWord2(splitedAddress ,a,b,reg,c,d){
+
+	let validAddress = "";
+	let balls = [...Array(splitedAddress.length ).keys()] ;
+
+	for(let ii=1;ii<balls.length;ii++){
+		let combi = kumiawase(balls,ii);
+		for(let i=0;i<combi.length;i++){
+
+			let builder = "";
+			for(let j=0;j<splitedAddress.length;j++){
+				builder = builder + splitedAddress[j];
+				
+				if(j !== splitedAddress.length - 1){
+					if(combi[i].includes(j)  ){
+						builder = builder + a;
+					}else{
+						builder = builder + b;
+					}
+				}
+			}
+			console.log(builder);
+			if(validAddress === ""){validAddress = replaceWord( builder.split(reg) ,c,d)}
+			console.log(validAddress);
+		}
+	}
+	console.log(validAddress);
+	return validAddress;
+
+}
+
+function kumiawase(balls, nukitorisu){
+  var arrs, i, j, zensu, kumis;
+  arrs = [];
+  zensu = balls.length;
+  if(zensu < nukitorisu){
+    return;
+  }else if(nukitorisu == 1){
+    for(i = 0; i < zensu; i++){
+      arrs[i] = [balls[i]];
+    }
+  }else{
+    for(i = 0; i < zensu - nukitorisu + 1; i ++){
+      kumis = kumiawase(balls.slice(i + 1), nukitorisu - 1);
+      for(j = 0; j < kumis.length; j ++){
+        arrs.push([balls[i]].concat(kumis[j]));
+      }
+    }
+  }
+  return arrs;
+}
 
 $("#button_reset").click(function(){
 	isMovieScanning = true;
@@ -166,6 +297,8 @@ $("#button_reset").click(function(){
 	requestAnimationFrame(tick);
 	$('#button_snap').prop('disabled', false);
 	$('#button_reset').prop('disabled', true);
+	$('#spinner_snap').collapse('hide');
+
 
 });
 
@@ -173,7 +306,6 @@ $("#button_reset").click(function(){
 
 var canvasElement;
 var canvas;
-
 var isMovieScanning = false;
 var video = document.createElement("video");
 
@@ -254,7 +386,6 @@ function scanFileImage(tag){
 	canvasElement.hidden = false;
 
 	stopVideo();
-
 	const fileList = document.getElementById(tag).files;
 	const reader = new FileReader();
 	const file = fileList[0];
@@ -267,7 +398,7 @@ function scanFileImage(tag){
 				img.src = e.target.result;
 				img.onload = function() {
 					canvasElement.width  = $('.modal-content').width() * 0.9;
-					canvasElement.height = $('.modal-content').height() * 0.9 * img.height / img.width;
+					canvasElement.height = $('.modal-content').width() * 0.9 * img.height / img.width;
 					getCodeInfo(img);
 					drawFrame();
 				};
@@ -287,13 +418,9 @@ const node = "https://node.xembook.net";
 const repo = new nem.RepositoryFactoryHttp(node);
 const txRepo = repo.createTransactionRepository();
 const nsRepo = repo.createNamespaceRepository();
-
 var listener;
 
-
 (async() =>{
-
-
 	if(listener === undefined){
 		const wsEndpoint = node.replace('http', 'ws') + "/ws";
 		await listenerKeepOpening(wsEndpoint,repo.createNamespaceRepository());
@@ -335,10 +462,7 @@ $("#send_tomato").click(function(){
 
 		console.log(x)
 	});
-
-
 });
-
 
 </script>
 </body>
