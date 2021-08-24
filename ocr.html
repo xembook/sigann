@@ -153,7 +153,6 @@ $("#button_snap").click(function(){
 		await worker.initialize('eng');
 		await worker.setParameters({
 			tessedit_char_whitelist: '234567ABCDEFGHIJKLMNOPQRSTUVWXYZ-',
-			tessedit_pageseg_mode: PSM.SINGLE_LINE
 		});
 		const { data: { text } } = await worker.recognize(canvas2);
 
