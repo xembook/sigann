@@ -157,8 +157,8 @@ $("#button_snap").click(function(){
 		const { data: { text } } = await worker.recognize(canvas2);
 
 		$('#spinner_snap').collapse('hide');
-		text = text.replace(/\r?\n/g,"");
-		var scanedAddress = text.match(/N[0-Z]{5}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{2}[AIQY]/);
+		line = text.replace(/\r?\n/g,"");
+		var scanedAddress = line.match(/N[0-Z]{5}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{6}-*[0-Z]{2}[AIQY]/);
 		alert(scanedAddress);
 		validAddress = "";
 		if(scanedAddress){
@@ -187,7 +187,7 @@ $("#button_snap").click(function(){
 
 			}
 			alert(validAddress);
-			console.log(text);
+			console.log(line);
 			console.log(scanedAddress);
 
 		}else{
