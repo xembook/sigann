@@ -67,6 +67,7 @@
 </div><!-- /.modal -->
 
 <script type="text/javascript" src="https://unpkg.com/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
+<script type="text/javascript" src="https://unpkg.com/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script
@@ -79,7 +80,7 @@
 
 <script>
 
-
+PSM  = Tesseract.PSM;
 
 var currentTab;			//カメラ操作している場合の現在選択中のタブ
 var scanData = document.getElementById("scan_data");
@@ -122,6 +123,7 @@ $("#modal_ok").click(async function(){
 	}
 });
 
+
 $('#file_image').change(function(e){scanFileImage("file_image");});
 $("#button_snap").click(function(){
 	$('#spinner_snap').collapse('show');
@@ -151,6 +153,7 @@ $("#button_snap").click(function(){
 		await worker.initialize('eng');
 		await worker.setParameters({
 			tessedit_char_whitelist: '234567ABCDEFGHIJKLMNOPQRSTUVWXYZ-',
+			tessedit_pageseg_mode: PSM.SINGLE_LINE
 		});
 		const { data: { text } } = await worker.recognize(canvas2);
 
@@ -167,6 +170,7 @@ $("#button_snap").click(function(){
 			if(validAddress ==="" ){validAddress = replaceWord( scanedAddress[0].split(/[OD]/) ,"O","D");}
 			if(validAddress ==="" ){validAddress = replaceWord( scanedAddress[0].split(/[IJ]/) ,"I","J");}
 			if(validAddress ==="" ){validAddress = replaceWord( scanedAddress[0].split(/[Z2]/) ,"Z","7");}
+			if(validAddress ==="" ){validAddress = replaceWord( scanedAddress[0].split(/[S6]/) ,"S","6");}
 			if(validAddress ==="" ){validAddress = replaceWord2(scanedAddress[0].split(/[A4]/) ,"A","4",/[S5]/,"S","5");}
 			if(validAddress ==="" ){validAddress = replaceWord2(scanedAddress[0].split(/[IJ]/) ,"I","J",/[S5]/,"S","5");}
 
