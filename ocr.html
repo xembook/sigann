@@ -190,7 +190,7 @@ $("#button_snap").click(function(){
 			console.log(scanedAddress);
 
 		}else{
-			alert("アドレスのスキャンに失敗しました。");
+			alert("アドレスのスキャンに失敗しました。"+ text);
 			isMovieScanning = true;
 			scanData.innerText = "";
 			requestAnimationFrame(tick);
