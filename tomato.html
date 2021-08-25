@@ -181,6 +181,8 @@ startApp(
 	//初期設定完了後
 	function(){
 
+		listener.newBlock();
+
 		if (1 < document.location.search.length) {
 
 			const query = document.location.search.substring(1);
