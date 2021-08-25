@@ -669,6 +669,10 @@ $("#button_faucet").click(function(){
 			}
 		}).done(function(res){
 			console.log(res);
+			if(res == "false"){
+			
+				$('#button_faucet').prop('disabled', false);
+			}
 		});
 });
 
