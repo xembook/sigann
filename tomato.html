@@ -379,6 +379,8 @@ function showAccountQR(){
 		}
 
 		$('#spinner_faucet').collapse('hide');
+		$('#button_faucet').prop('disabled', false);
+
 	}
 
 	setAccountObserver(assetPublicAccount.address,subscribeAccountInfo);
@@ -665,7 +667,6 @@ $("#button_faucet").click(function(){
 			}
 		}).done(function(res){
 			console.log(res);
-			$('#button_faucet').prop('disabled', false);
 		});
 });
 
