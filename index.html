@@ -51,11 +51,6 @@
 						</div>
 
 
-						<div>
-							<button type="button" id="button_faucet" class="btn btn-primary">
-								Faucet
-							</button>
-						</div>
 					</div>
 				</div>
 			</div>
@@ -180,6 +175,8 @@ var payload ="";
 startApp(
 	//初期設定完了後
 	function(){
+
+		listener.newBlock();
 
 		if (1 < document.location.search.length) {
 
@@ -651,7 +648,6 @@ $("#button_transfer").click(
 		disableScan = false;
 	}
 );
-$("#button_faucet").click(function(){window.open(FAUCET + "/?recipient=" + assetPublicAccount.address.plain() + "&amount=20","_blank")});
 
 /** 設定タブ **/
 

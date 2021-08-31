@@ -212,6 +212,7 @@ startApp(
 	},
 	//リスナー再起動後
 	function(){
+		listener.newBlock();
 		if(assetPublicAccount !== undefined){
 			showAccountQR();
 		}
@@ -591,7 +592,7 @@ $("#create").click(async function(){
 
 	var msg = "作成したアカウント情報を保存しますか？";
 	if(localStorage.getItem('signerJSON') !== null){
-		msg += "\n以前に保存していた情報は上書き削除されます。";
+		msg += "\n以前に保存していた情報は上書き削除されます。「キャンセル」で今回作成したアカウントを一時的に使用します。";
 	}
 
 	if(window.confirm(msg)){
